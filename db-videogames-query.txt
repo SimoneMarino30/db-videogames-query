@@ -87,7 +87,8 @@ JOIN category_videogame ON categories.id = category_videogame.category_id
 JOIN videogames ON category_videogame.videogame_id = videogames.id 
 JOIN pegi_label_videogame ON pegi_label_videogame.videogame_id = videogames.id 
 JOIN pegi_labels ON pegi_labels.id = pegi_label_videogame.pegi_label_id 
-JOIN reviews ON videogames.id = reviews.videogame_id WHERE reviews.rating > 3; 
+JOIN reviews ON videogames.id = reviews.videogame_id 
+WHERE reviews.rating > 3; 
 
 7- Selezionare quali giochi erano presenti nei tornei nei quali hanno partecipato i giocatori il cui nome inizia per 'S' (474)
 SELECT DISTINCT videogames.* 
@@ -95,10 +96,31 @@ FROM `players`
 JOIN player_tournament ON players.id = player_tournament.player_id 
 JOIN tournaments ON player_tournament.tournament_id = tournaments.id 
 JOIN tournament_videogame ON tournaments.id = tournament_videogame.tournament_id 
-JOIN videogames ON tournament_videogame.videogame_id = videogames.id WHERE players.name LIKE 'S%'; 
+JOIN videogames ON tournament_videogame.videogame_id = videogames.id 
+WHERE players.name LIKE 'S%'; 
 
 8- Selezionare le città in cui è stato giocato il gioco dell'anno del 2018 (36)
+SELECT DISTINCT tournaments.city 
+FROM `videogames` 
+JOIN award_videogame ON videogames.id = award_videogame.videogame_id 
+JOIN awards ON award_videogame.award_id = awards.id 
+JOIN tournament_videogame ON videogames.id = tournament_videogame.videogame_id 
+JOIN tournaments ON tournament_videogame.tournament_id = tournaments.id 
+WHERE award_videogame.year = 2018; 
+
 9- Selezionare i giocatori che hanno giocato al gioco più atteso del 2018 in un torneo del 2019 (3306)
+SELECT p.name, p.lastname 
+FROM `players` p 
+JOIN player_tournament pt ON p.id = pt.player_id 
+JOIN tournaments t ON pt.tournament_id = t.id 
+JOIN tournament_videogame tv ON t.id = tv.tournament_id 
+JOIN videogames v ON tv.videogame_id = v.id 
+JOIN award_videogame av ON v.id = av.videogame_id 
+JOIN awards a ON av.award_id = a.id 
+WHERE t.year = 2019 
+AND av.year = 2018 
+AND a.id = 1; 
+
 *********** BONUS ***********
 10- Selezionare i dati della prima software house che ha rilasciato un gioco, assieme ai dati del gioco stesso (software house id : 5)
 11- Selezionare i dati del videogame (id, name, release_date, totale recensioni) con più recensioni (videogame id : potrebbe uscire 449 o 398, sono entrambi a 20)
